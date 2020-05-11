@@ -1,0 +1,43 @@
+package br.sc.senai.model;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "user")
+@NamedQueries({
+		@NamedQuery(name="User.listAll", query="select u from User u")
+})
+public class User {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+	private String nome;
+	private String senha;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public String getSenha() {
+		return senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+
+}
