@@ -18,12 +18,24 @@ public class UserDAOTest {
 		factory = Persistence.createEntityManagerFactory("npdb");
 		entityManager = factory.createEntityManager();
 
-		insert();
+		//  insert();
 		//  update();
 		//  delete();
 		//  find();
 
-		listUsers();
+		User user = new User();
+		user.setEmail("pedro@moratelli.dev");
+		user.setSenha("123123");
+
+		boolean found = login(user);
+
+		if (found) {
+			System.out.println("Login was successful!");
+		} else {
+			System.out.println("Wrong user/password!");
+		}
+
+		//  listUsers();
 
 		entityManager.close();
 		factory.close();
@@ -34,8 +46,9 @@ public class UserDAOTest {
 
 		User newUser = new User();
 
-		newUser.setNome("Carlos Alberto");
-		newUser.setSenha("222333");
+		newUser.setNome("Pedro Moratelli");
+		newUser.setEmail("pedro@moratelli.dev");
+		newUser.setSenha("123123");
 
 		entityManager.persist(newUser);
 		entityManager.getTransaction().commit();
@@ -44,9 +57,10 @@ public class UserDAOTest {
 	public static void update() {
 		entityManager.getTransaction().begin();
 
-		User updatedUser = entityManager.find(User.class, 3);
+		User updatedUser = entityManager.find(User.class, 2);
 
 		updatedUser.setNome("Antonio Augusto");
+		updatedUser.setEmail("antonio@senai.br");
 		updatedUser.setSenha("aabbcc");
 
 		entityManager.merge(updatedUser);
@@ -56,7 +70,7 @@ public class UserDAOTest {
 	private static void delete() {
 		entityManager.getTransaction().begin();
 
-		User user = entityManager.find(User.class, 4);
+		User user = entityManager.find(User.class, 1);
 
 		entityManager.remove(user);
 		entityManager.getTransaction().commit();
@@ -68,7 +82,7 @@ public class UserDAOTest {
 		User user = entityManager.find(User.class, 1);
 
 		System.out.println("Nome: " + user.getNome());
-		System.out.println("Senha " + user.getSenha());
+		System.out.println("Email " + user.getEmail());
 
 		entityManager.getTransaction().commit();
 	}
@@ -80,8 +94,29 @@ public class UserDAOTest {
 		for (User user : users) {
 			System.out.println("------");
 			System.out.println(user.getNome());
+			System.out.println(user.getEmail());
 			System.out.println(user.getSenha());
 		}
+	}
+
+	public static boolean login(User user) {
+		boolean found = true;
+
+		try {
+			Query query = entityManager.createNamedQuery("User.login");
+
+			query.setParameter("email", user.getEmail());
+			query.setParameter("senha", user.getSenha());
+
+			User userLogin = (User) query.getSingleResult();
+
+			System.out.println(userLogin.getNome() + " has logged in!");
+		} catch (Exception e) {
+			e.printStackTrace();
+			found = false;
+		}
+
+		return found;
 	}
 
 }
